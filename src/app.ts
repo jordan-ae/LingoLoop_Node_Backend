@@ -4,19 +4,26 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import tutorRoutes from './routes/tutorRoutes';
 import exerciseRoutes from './routes/exerciseRoutes';
+import authRoutes from './routes/authRoutes';
+import { authenticate } from './middleware/authMiddleware';
 
 dotenv.config();
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
-app.use('/api/tutors', tutorRoutes);
-app.use('/api/exercises', exerciseRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/tutors', (req, res, next) => {
+  authenticate(req, res, next);
+  return;
+}, tutorRoutes);
+app.use('/api/exercises', (req, res, next) => {
+  authenticate(req, res, next);
+  return;
+}, exerciseRoutes);
 
-// MongoDB Connection
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/language-saas';
+const MONGO_URI = process.env.MONGO_URI || '';
 mongoose.connect(MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
