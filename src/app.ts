@@ -14,14 +14,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
-app.use('/api/tutors', (req, res, next) => {
-  authenticate(req, res, next);
-  return;
-}, tutorRoutes);
-app.use('/api/exercises', (req, res, next) => {
-  authenticate(req, res, next);
-  return;
-}, exerciseRoutes);
+// app.use('/api/tutors', (req, res, next) => {
+//   authenticate(req, res, next);
+//   return;
+// }, tutorRoutes);
+// app.use('/api/exercises', (req, res, next) => {
+//   authenticate(req, res, next);
+//   return;
+// }, exerciseRoutes);
 
 const MONGO_URI = process.env.MONGO_URI || '';
 mongoose.connect(MONGO_URI)
