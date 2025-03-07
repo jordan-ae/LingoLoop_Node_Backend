@@ -14,6 +14,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api/tutors', tutorRoutes)
 // app.use('/api/tutors', (req, res, next) => {
 //   authenticate(req, res, next);
 //   return;

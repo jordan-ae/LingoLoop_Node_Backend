@@ -10,7 +10,8 @@ export const suspendUser = async (req: Request<{ userId: string }>, res: Respons
     }
     return res.status(200).json({ message: 'User suspended' });
 };
-  export const getPaymentHistory = async (req: Request, res: Response) => {
+
+export const getPaymentHistory = async (req: Request, res: Response) => {
     const payments = await Lesson.find({}).populate([
       { path: 'student' },
       { path: 'tutor' }
