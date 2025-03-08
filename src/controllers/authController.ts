@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '../utils/emailService';
 import { RolesEnum } from '../enums';
-import { validateLoginRequest, validateRegisterRequest } from '../validators/authValidators';
+import { validateLoginRequest, validateRegisterRequest, resendEmailVerificationRequest } from '../validators/authValidators';
 import { createResponse } from '../utils/createResponse';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
@@ -90,6 +90,12 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const resendVerificationEmail = async (req: Request, res: Response) => {
+  await Promise.all(resendEmailVerificationRequest.map(validation => validation.run(req)));
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return createResponse(res, false, 400, errors.array()[0].msg);
+  }
+  
   const { email } = req.body;
   try {
     const user = await User.findOne({ email, isVerified: false });

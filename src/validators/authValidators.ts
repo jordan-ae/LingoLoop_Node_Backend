@@ -15,3 +15,7 @@ export const validateRegisterRequest = [
         .isIn([RolesEnum.STUDENT, RolesEnum.TUTOR])
         .withMessage("Invalid role provided, Role can either be student or tutor"),
 ];
+
+export const resendEmailVerificationRequest = [
+  check("email", "Please enter a valid email address").isEmail(),
+];
