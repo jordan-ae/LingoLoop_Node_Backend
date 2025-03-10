@@ -3,7 +3,7 @@ import { IUser } from './User';
 
 export interface ITutor extends Document {
   user: Schema.Types.ObjectId;
-  isVerified: boolean;
+  status: 'pending' | 'approved' | 'rejected';
   country: string;
   phone: string;
   videoLink: string;
@@ -25,6 +25,7 @@ const TutorSchema = new Schema<ITutor>({
   availability: [{ day: String, start: String, end: String }],
   pricePerHour: { type: Number },
   document: { type: String },
+  status: {type: String, enum: ['pending', 'approved', 'rejected'], required: true}
 });
 
 export default model<ITutor>('Tutor', TutorSchema);

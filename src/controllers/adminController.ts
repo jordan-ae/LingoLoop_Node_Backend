@@ -18,3 +18,21 @@ export const getPaymentHistory = async (req: Request, res: Response) => {
     ]);
     res.json(payments);
   };
+
+export const getAllTutors = async (req: Request, res: Response) => {
+    try {
+        const tutors = await User.find({ role: 'tutor' }).select('-password');
+        res.status(200).json(tutors);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching tutors' });
+    }
+};
+
+export const getTotalUsers = async (req: Request, res: Response) => {
+    try {
+        const totalUsers = await User.countDocuments();
+        res.status(200).json({ totalUsers });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user count' });
+    }
+};

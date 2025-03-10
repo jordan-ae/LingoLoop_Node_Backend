@@ -46,7 +46,7 @@ export const applyAsTutor = async (req: Request, res: Response) => {
       videoLink,
       bio,
       languages,
-      isVerified: false
+      status: 'pending'
     });
 
     await newTutor.save();
@@ -56,7 +56,7 @@ export const applyAsTutor = async (req: Request, res: Response) => {
       tutor: {
         id: newTutor._id,
         user: newTutor.user,
-        isVerified: newTutor.isVerified
+        status: newTutor.status
       }
     });
   } catch (err: unknown) {
@@ -95,7 +95,8 @@ export const updateTutorDetails = async (req: Request, res: Response) => {
     bio,
     languages,
     pricePerHour,
-    availability
+    availability,
+    status
   } = req.body;
 
   // Basic validation
@@ -147,7 +148,8 @@ export const updateTutorDetails = async (req: Request, res: Response) => {
       ...(bio && { bio }),
       ...(languages && { languages }),
       ...(pricePerHour && { pricePerHour }),
-      ...(availability && { availability })
+      ...(availability && { availability }),
+      status: 'pending'
     };
 
     // Find and update by user reference
@@ -169,5 +171,23 @@ export const updateTutorDetails = async (req: Request, res: Response) => {
     console.error('Error updating tutor details:', err);
     const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
     res.status(500).json({ message: 'Error updating tutor details', error: errorMessage });
+  }
+};
+
+export const getTutorByUserId = async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  
+  try {
+    const tutor = await Tutor.findOne({ user: userId });
+    
+    if (!tutor) {
+      return res.status(404).json({ message: 'Tutor not found' });
+    }
+    
+    res.status(200).json(tutor);
+  } catch (err: unknown) {
+    console.error('Error fetching tutor:', err);
+    const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+    res.status(500).json({ message: 'Error fetching tutor details', error: errorMessage });
   }
 };
