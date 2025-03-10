@@ -1,4 +1,14 @@
-import mailTransporter from "../services/mail";
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
+  }
+});
 
 export const sendVerificationEmail = async (email: string, token: string) => {
   const verificationUrl = `${process.env.BASE_URL}/verify-email?token=${token}`;
@@ -13,5 +23,5 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     `
   };
 
-  await mailTransporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 }; 
