@@ -8,11 +8,23 @@ export interface MulterRequest extends Request {
 }
 
 export const applyAsTutor = async (req: Request, res: Response) => {
-  const { userId, phone, country, videoLink, bio, languages } = req.body;
+  const { userId, phone, country, videoLink, bio, languages, certificationExams, teachingLanguage, catchPhrase } = req.body;
 
-  // Basic validation
-  if (!userId || !phone || !country || !videoLink || !bio || !languages) {
-    return res.status(400).json({ message: 'All fields are required' });
+  // Detailed validation for required fields
+  const missingFields = [];
+  if (!userId) missingFields.push('userId');
+  if (!phone) missingFields.push('phone');
+  if (!country) missingFields.push('country');
+  if (!videoLink) missingFields.push('videoLink');
+  if (!bio) missingFields.push('bio');
+  if (!languages) missingFields.push('languages');
+  if(!catchPhrase) missingFields.push('catchPhrase')
+  
+  if (missingFields.length > 0) {
+    return res.status(400).json({ 
+      message: 'Missing required fields',
+      missingFields: missingFields
+    });
   }
 
   // Validate video link format
@@ -46,8 +58,11 @@ export const applyAsTutor = async (req: Request, res: Response) => {
       videoLink,
       bio,
       languages,
-      status: 'pending'
-    });
+      status: 'pending',
+      certificationExams,
+      teachingLanguage,
+      catchPhrase
+      });
 
     await newTutor.save();
 
@@ -189,5 +204,41 @@ export const getTutorByUserId = async (req: Request, res: Response) => {
     console.error('Error fetching tutor:', err);
     const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
     res.status(500).json({ message: 'Error fetching tutor details', error: errorMessage });
+  }
+};
+
+export const changeTutorStatus = async (req: Request, res: Response) => {
+  const { tutorId } = req.params;
+  const { status } = req.body;
+
+  // Validate status
+  if (!['approved', 'rejected'].includes(status)) {
+    return res.status(400).json({ 
+      message: 'Invalid status. Must be either "approved" or "rejected"' 
+    });
+  }
+
+  try {
+    const updatedTutor = await Tutor.findByIdAndUpdate(
+      tutorId,
+      { status },
+      { new: true }
+    ).populate('user', 'name email');
+
+    if (!updatedTutor) {
+      return res.status(404).json({ message: 'Tutor not found' });
+    }
+
+    res.status(200).json({
+      message: `Tutor status updated to ${status}`,
+      tutor: updatedTutor
+    });
+  } catch (err: unknown) {
+    console.error('Error updating tutor status:', err);
+    const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+    res.status(500).json({ 
+      message: 'Error updating tutor status', 
+      error: errorMessage 
+    });
   }
 };

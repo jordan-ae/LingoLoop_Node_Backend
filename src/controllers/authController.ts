@@ -8,19 +8,21 @@ import { sendVerificationEmail } from '../utils/emailService';
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 export const register = async (req: Request, res: Response) => {
-  const { name, email, password, role } = req.body;
+  const { firstName, lastName, email, password, role } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = crypto.randomBytes(20).toString('hex');
     
     const user = new User({ 
-      name, 
+      firstName,
+      lastName, 
       email, 
       password: hashedPassword, 
       role,
       isVerified: false,
       verificationToken,
-      isActive: false
+      isActive: false,
+      status: 'pending'
     });
     
     await user.save();
@@ -38,7 +40,8 @@ export const register = async (req: Request, res: Response) => {
         email: user.email,
         role: user.role,
         isActive: user.isActive,
-        isVerified: user.isVerified
+        isVerified: user.isVerified,
+        status: user.status
       },
       token
     });

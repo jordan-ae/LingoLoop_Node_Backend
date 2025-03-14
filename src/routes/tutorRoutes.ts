@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { applyAsTutor, searchTutors, updateTutorDetails, getTutorByUserId } from '../controllers/tutorController';
+import { applyAsTutor, searchTutors, updateTutorDetails, getTutorByUserId, changeTutorStatus } from '../controllers/tutorController';
 
 const router = express.Router();
 
@@ -31,5 +31,11 @@ router.get('/user/:userId', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+router.patch(
+  '/:tutorId/status',
+  async (req: Request, res: Response) => {
+    await changeTutorStatus(req, res);
+  }
+);
 
 export default router;

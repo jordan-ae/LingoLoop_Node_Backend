@@ -9,6 +9,7 @@ export interface IUser extends Document {
   isActive: boolean;
   isVerified: boolean;
   verificationToken?: string;
+  status: 'pending' | 'approved' | 'rejected'
 }
 
 const UserSchema = new Schema<IUser>({
@@ -19,7 +20,8 @@ const UserSchema = new Schema<IUser>({
   role: { type: String, enum: ['student', 'tutor', 'admin'], required: true },
   isActive: { type: Boolean, default: true },
   isVerified: { type: Boolean, default: false },
-  verificationToken: { type: String }
+  verificationToken: { type: String },
+  status: { type: String, enum: ['pending', 'approved', 'rejected'], required: true },
 });
 
 export default model<IUser>('User', UserSchema);

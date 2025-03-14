@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Lesson from "../models/Lesson";
 import User from "../models/User";
+import Tutor from "../models/Tutor";
 
 export const suspendUser = async (req: Request<{ userId: string }>, res: Response) => {
     const { userId } = req.params;
@@ -21,7 +22,18 @@ export const getPaymentHistory = async (req: Request, res: Response) => {
 
 export const getAllTutors = async (req: Request, res: Response) => {
     try {
-        const tutors = await User.find({ role: 'tutor' }).select('-password');
+        // First get all users with tutor role
+        const tutorUsers = await User.find({ role: 'tutor' }).select('-password');
+        
+        // Get the corresponding Tutor documents for these users
+        const tutors = await Promise.all(tutorUsers.map(async (user) => {
+            const tutorProfile = await Tutor.findOne({ user: user.id });
+            return {
+                ...user.toObject(),
+                tutorProfile
+            };
+        }));
+        
         res.status(200).json(tutors);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching tutors' });
