@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Tutor, { ITutor } from '../models/Tutor';
 import multer from 'multer';
 import User from '../models/User';
+import mongoose from 'mongoose';
 
 export interface MulterRequest extends Request {
   file: Express.Multer.File;
@@ -110,14 +111,16 @@ export const updateTutorDetails = async (req: Request, res: Response) => {
     bio,
     languages,
     pricePerHour,
-    availability,
-    status
+    availability
   } = req.body;
 
   // Basic validation
   if (!phone && !country && !videoLink && !bio && !languages && !pricePerHour && !availability) {
     return res.status(400).json({ message: 'At least one field must be provided for update' });
   }
+
+  // Convert userId to ObjectId
+  const userObjectId = new mongoose.Types.ObjectId(userId);
 
   // Validate video link format if provided
   if (videoLink) {
@@ -169,13 +172,13 @@ export const updateTutorDetails = async (req: Request, res: Response) => {
 
     // Find and update by user reference
     const updatedTutor = await Tutor.findOneAndUpdate(
-      { user: userId },
+      { user: userObjectId },
       updateData,
       { new: true }
     );
 
     if (!updatedTutor) {
-      return res.status(404).json({ message: 'Tutor not found' });
+      return res.status(404).json({ message: 'Tutor not found for this user' });
     }
 
     res.status(200).json({

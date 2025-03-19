@@ -7,6 +7,7 @@ import exerciseRoutes from './routes/exerciseRoutes';
 import authRoutes from './routes/authRoutes';
 import { authenticate } from './middleware/authMiddleware';
 import adminRoutes from './routes/adminRoutes';
+import lessonRoutes from './routes/lessonRoutes';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/tutors', tutorRoutes);
 app.use('/api/admin', adminRoutes)
+app.use('/api/lessons', lessonRoutes);
 // app.use('/api/tutors', (req, res, next) => {
 //   authenticate(req, res, next);
 //   return;

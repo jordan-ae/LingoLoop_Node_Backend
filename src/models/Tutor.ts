@@ -10,7 +10,10 @@ export interface ITutor extends Document {
   bio: string;
   languages: { language: string; proficiency: string }[];
   certificationExams: string[];
-  availability?: { day: string; start: string; end: string }[];
+  availability?: { 
+    day: string; 
+    slots: { start: string; end: string }[] 
+  }[];
   pricePerHour?: number;
   lessons?: Schema.Types.ObjectId[];
   document?: string;
@@ -26,7 +29,10 @@ const TutorSchema = new Schema<ITutor>({
   bio: { type: String },
   languages: [{ language: String, proficiency: String }],
   certificationExams: [String],
-  availability: [{ day: String, start: String, end: String }],
+  availability: [{ 
+    day: String, 
+    slots: [{ start: String, end: String }] 
+  }],
   pricePerHour: { type: Number },
   document: { type: String },
   status: {type: String, enum: ['pending', 'approved', 'rejected'], required: true},

@@ -36,3 +36,23 @@ export const createClassroom = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to create a Daily.co room' });
   }
 };
+
+export const createLesson = async (req: Request, res: Response) => {
+  try {
+    const { student, tutor, startTime, endTime, price } = req.body;
+    
+    const newLesson = new Lesson({
+      student,
+      tutor,
+      startTime,
+      endTime,
+      price
+    });
+
+    const savedLesson = await newLesson.save();
+    res.status(201).json(savedLesson);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to create lesson' });
+  }
+};

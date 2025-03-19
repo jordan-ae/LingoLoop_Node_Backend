@@ -17,7 +17,7 @@ router.get('/search', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-router.put('/:id/update', async (req: Request, res: Response) => {
+router.put('/:userId/update', async (req: Request, res: Response) => {
   try {
     await updateTutorDetails(req, res);
   } catch (error) {

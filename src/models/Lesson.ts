@@ -1,6 +1,7 @@
 import { Schema, model, Document } from 'mongoose';
 
 export interface ILesson extends Document {
+  title: string;
   student: Schema.Types.ObjectId;
   tutor: Schema.Types.ObjectId;
   startTime: Date;
@@ -12,6 +13,7 @@ export interface ILesson extends Document {
 }
 
 const LessonSchema = new Schema<ILesson>({
+  title: {type: String},
   student: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   tutor: { type: Schema.Types.ObjectId, ref: 'Tutor', required: true },
   startTime: { type: Date, required: true },
